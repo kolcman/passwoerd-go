@@ -24,15 +24,22 @@ func (account *account) generatePassword(n int) {
 }
 
 func newAccount(login string, password string, urlString string) (*account, error) {
+	if login == "" {
+		return nil, errors.New("Нет заполнили логин")
+	}
 	_, err := url.ParseRequestURI(urlString)
 	if err != nil {
 		return nil, errors.New("некорректный адрес")
 	}
-	return &account{
+	newAcc := &account{
 		login:    login,
 		password: password,
 		url:      urlString,
-	}, nil
+	}
+	if password == "" {
+		newAcc.generatePassword(12)
+	}
+	return newAcc, nil
 }
 
 func main() {
@@ -51,6 +58,6 @@ func main() {
 func promptData(prompt string) string {
 	fmt.Print(prompt)
 	var res string
-	fmt.Scan(&res)
+	fmt.Scanln(&res)
 	return res
 }
